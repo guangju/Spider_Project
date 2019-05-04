@@ -149,6 +149,7 @@ if __name__ == '__main__':
         out_data['time_'] = time_.xpath('string()')
         all_list.append(out_data)
     all_list.reverse()
+    all_list.append(0)
     conn = my_conn(host='www.muming8.com', user='zhang', passwd='zhang.123', port=3306, db='kehu')
     for old_number in conf.new_if_list:
         root_dir = os.path.split(os.path.abspath(sys.argv[0]))[0]

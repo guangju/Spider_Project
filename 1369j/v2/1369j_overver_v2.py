@@ -126,9 +126,9 @@ def get_data(conn,old_data,new_data,old_number,len_item):
             jianyi_number = conf.jianyi_dict.get('%s'%number_dict[number_key])
             msg1 = '%s.%s.%s' % (number_key_out, ''.join(other_list),jianyi_number)
             print(msg,msg1)
-                # send_qq(conf.to_who, msg)
-                # time.sleep(1)
-                # send_qq(conf.to_who, msg1)
+            send_qq(conf.to_who, msg)
+            time.sleep(1)
+            send_qq(conf.to_who, msg1)
 
             time.sleep(1)
     fw = open('%s/number.conf'%root_dir, 'w', encoding='utf-8')

@@ -87,14 +87,9 @@ def my_select(conn):
     return data
 def get_data(conn,old_data,new_data,old_number,len_item):
     global number_dict
-
     out_data = new_data
-
-    # for len_item in conf.len_number_list:
     old_if_data = []
     for old_n in len_item:
-        if old_n ==10:
-            old_n = 0
         old_if_data.append('%s'%old_data['number%s' % old_n])
     all_if_data = []
     for new_n in range(1, 11):
@@ -107,7 +102,6 @@ def get_data(conn,old_data,new_data,old_number,len_item):
         other_list.append(str(item_number))
 
     other_list.sort()
-        # for old_number in conf.new_if_list:
     print('第%s-%s列 与 这组%s ----%s'%(old_number,out_data['number%s'%old_number],old_if_data,len_item))
     if str(out_data['number%s'%old_number]) not in old_if_data:
         number_dict['%s'%old_number] = int(number_dict['%s'%old_number]) + 1
@@ -131,11 +125,11 @@ def get_data(conn,old_data,new_data,old_number,len_item):
             send_qq(conf.to_who, msg1)
 
             time.sleep(1)
-    fw = open('%s/number.conf'%root_dir, 'w', encoding='utf-8')
+    fw = open('%s/number_col%s%s.conf' % (root_dir, old_number, ''.join(str(x) for x in len_item )), 'w', encoding='utf-8')
     fw.write(json.dumps(number_dict,ensure_ascii=False))
     fw.close()
 if __name__ == '__main__':
-
+    #
     url = 'https://www.1396j.com/xyft/kaijiang'
     wb_data = requests.get(url=url)
     et = etree.HTML(wb_data.text)
@@ -153,22 +147,22 @@ if __name__ == '__main__':
     conn = my_conn(host='www.muming8.com', user='zhang', passwd='zhang.123', port=3306, db='kehu')
     for old_number in conf.new_if_list:
         root_dir = os.path.split(os.path.abspath(sys.argv[0]))[0]
-        number_dict = {"1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0, "8": 0, "9": 0, "10": 0}
-        fw = open('%s/number_col%s.conf' % (root_dir, old_number), 'w', encoding='utf-8')
-        fw.write(json.dumps(number_dict, ensure_ascii=False))
-        fw.close()
+
         for len_item in conf.len_number_list:
+            print(len_item)
+            number_dict = {"1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 0, "8": 0, "9": 0, "10": 0}
+            print()
+            fw = open('%s/number_col%s%s.conf' % (root_dir, old_number, ''.join(str(x) for x in len_item )), 'w', encoding='utf-8')
+            fw.write(json.dumps(number_dict, ensure_ascii=False))
+            fw.close()
             for old_data,new_data in zip(all_list,all_list[1:-1]):
-                # print(old_data,new_data)
                 get_data(conn=conn,new_data=new_data,old_data=old_data,old_number=old_number,len_item=len_item)
     my_delete(conn=conn)
     my_close(conn=conn)
-
+    #
 
 
     while True:
-        # try:
-
             conn = my_conn(host='www.muming8.com', user='zhang', passwd='zhang.123', port=3306, db='kehu')
             old_data = my_select(conn=conn)
             url = 'https://www.1396j.com/xyft/kaijiang'
@@ -196,9 +190,11 @@ if __name__ == '__main__':
                 my_insert(conn=conn, data=new_data)
                 for old_number in conf.new_if_list:
                     root_dir = os.path.split(os.path.abspath(sys.argv[0]))[0]
-                    f = open('%s/number_col%s.conf' % (root_dir, old_number), 'r', encoding='utf-8')
-                    number_dict = json.load(f)
+
                     for len_item in conf.len_number_list:
+                        f = open('%s/number_col%s%s.conf' % (root_dir, old_number, ''.join(str(x) for x in len_item )), 'r',
+                                  encoding='utf-8')
+                        number_dict = json.load(f)
                         # for old_data, new_data in zip(all_list, all_list[1:-1]):
                         get_data(conn=conn, new_data=new_data, old_data=old_data, old_number=old_number, len_item=len_item)
                 print('运行完成一次,等待一分钟')
@@ -207,6 +203,5 @@ if __name__ == '__main__':
                 print('未检测到新数据更新，等待一分钟')
                 time.sleep(60)
             my_close(conn=conn)
-        # except Exception as e:
-        #     print(e)
+
 
